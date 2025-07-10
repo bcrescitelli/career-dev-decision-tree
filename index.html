@@ -106,9 +106,97 @@
   </style>
 </head>
 <body>
-  <!-- Same content before script -->
+  <div class="section" id="step1">
+    <div class="step-indicator">
+      <div class="circle active">1</div>
+      <div class="circle">2</div>
+      <div class="circle">3</div>
+    </div>
+    <h2>Step 1: How does your customer view Career Development?</h2>
+    <div class="card-grid">
+      <div class="card">
+        <h3>Yes</h3>
+        <p>Career development is a top priority</p>
+        <button class="select-button" onclick="selectPriority('Yes')">Select</button>
+      </div>
+      <div class="card">
+        <h3>Maybe (With Nuances)</h3>
+        <p>There’s interest but not yet aligned or built out</p>
+        <button class="select-button" onclick="selectPriority('Maybe')">Select</button>
+      </div>
+      <div class="card">
+        <h3>No</h3>
+        <p>They don’t prioritize career development today</p>
+        <button class="select-button" onclick="selectPriority('No')">Select</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section hidden" id="step2">
+    <div class="step-indicator">
+      <div class="circle">1</div>
+      <div class="circle active">2</div>
+      <div class="circle">3</div>
+    </div>
+    <h2>Step 2: What customer segment are they?</h2>
+    <div class="card-grid">
+      <div class="card">
+        <h3>Base</h3>
+        <button class="select-button" onclick="selectSegment('Base')">Select</button>
+      </div>
+      <div class="card">
+        <h3>Hub</h3>
+        <button class="select-button" onclick="selectSegment('Hub')">Select</button>
+      </div>
+      <div class="card">
+        <h3>Strategic</h3>
+        <button class="select-button" onclick="selectSegment('Strategic')">Select</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section hidden" id="objectionStep">
+    <div class="step-indicator">
+      <div class="circle">1</div>
+      <div class="circle">2</div>
+      <div class="circle active">3</div>
+    </div>
+    <h2>Step 3: What are they pushing back on?</h2>
+    <div class="card-grid">
+      <div class="card">
+        <h3>No Talent Architecture</h3>
+        <p>“My company doesn’t have a talent architecture built out”</p>
+        <button class="select-button" onclick="showResults('noArch')">Select</button>
+      </div>
+      <div class="card">
+        <h3>Already Have a Solution</h3>
+        <p>“I just want content to flow through our LMS”</p>
+        <button class="select-button" onclick="showResults('existingSol')">Select</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section hidden" id="output"></div>
+
   <script>
-    // ... All previous logic remains unchanged above this function
+    let customerPriority = '';
+    let customerSegment = '';
+
+    function selectPriority(priority) {
+      customerPriority = priority;
+      document.getElementById('step1').classList.add('hidden');
+      document.getElementById('step2').classList.remove('hidden');
+    }
+
+    function selectSegment(segment) {
+      customerSegment = segment;
+      document.getElementById('step2').classList.add('hidden');
+      if (customerPriority === 'Maybe' || customerPriority === 'No') {
+        document.getElementById('objectionStep').classList.remove('hidden');
+      } else {
+        showResults();
+      }
+    }
 
     function showResults(objectionValue = '') {
       document.getElementById('step2').classList.add('hidden');
@@ -116,47 +204,71 @@
       const output = document.getElementById('output');
       output.classList.remove('hidden');
 
-      let result = '<div class="step-indicator">' +
-                   '<div class="circle">1</div>' +
-                   '<div class="circle">2</div>' +
-                   '<div class="circle active">3</div>' +
-                   '</div>';
+      let result = `
+        <div class="step-indicator">
+          <div class="circle">1</div>
+          <div class="circle">2</div>
+          <div class="circle active">3</div>
+        </div>
+        <h2>Recommended Product Solution</h2>
+        <div class="card">
+      `;
 
-      result += '<h2>Recommended Product Solution</h2>';
-      result += '<div class="card">';
-
-      // Custom logic for Base + No combo
       if (customerPriority === 'No' && customerSegment === 'Base') {
-        result += '<h3>LinkedIn Learning (formerly Base)</h3>';
-        result += '<p><strong>Feature Focus:</strong> Scalable content library, foundational learning, integrations with LMS</p>';
-        result += '<p><strong>Suggested Pitch:</strong> LinkedIn Learning can still serve your organization by delivering high-quality learning content, even if career development isn’t a focus right now.</p>';
+        result += `
+          <h3>LinkedIn Learning (formerly Base)</h3>
+          <p><strong>Feature Focus:</strong> Scalable content library, foundational learning, integrations with LMS</p>
+          <p><strong>Suggested Pitch:</strong> LinkedIn Learning can still serve your organization by delivering high-quality learning content, even if career development isn’t a focus right now.</p>
+        `;
       } else {
-        result += '<h3>LinkedIn Learning Career Hub</h3>';
-
+        result += `<h3>LinkedIn Learning Career Hub</h3>`;
         if (customerPriority === 'Yes') {
-          result += '<p><strong>Feature Focus:</strong> LinkedIn data, Talent architecture builder, Career Pathing, Role Play customization, AI Skill Pathways</p>';
-          result += '<p><strong>Multithread:</strong> Ask to multithread to Talent Management DM to communicate Career Hub value across HR team.</p>';
-        } else if (customerPriority === 'Maybe' || customerPriority === 'No') {
+          result += `
+            <p><strong>Feature Focus:</strong> LinkedIn data, Talent architecture builder, Career Pathing, Role Play customization, AI Skill Pathways</p>
+            <p><strong>Multithread:</strong> Ask to multithread to Talent Management DM to communicate Career Hub value across HR team.</p>
+          `;
+        } else {
           if (objectionValue === 'noArch') {
-            result += '<p><strong>Feature Focus:</strong> Talent Architecture Builder</p>';
-            result += '<p><strong>Suggested Pitch:</strong> You can now build a talent architecture from scratch by uploading a list of role titles. Career Hub delivers role suggestions powered by AI and LinkedIn Economic Graph data.</p>';
+            result += `
+              <p><strong>Feature Focus:</strong> Talent Architecture Builder</p>
+              <p><strong>Suggested Pitch:</strong> You can now build a talent architecture from scratch by uploading a list of role titles. Career Hub delivers role suggestions powered by AI and LinkedIn Economic Graph data.</p>
+            `;
           } else if (objectionValue === 'existingSol') {
-            result += '<p><strong>Feature Focus:</strong> Career Dev features (Role Guides, Next Role Explorer, Learning Plans)</p>';
-            result += '<p><strong>Suggested Pitch:</strong> Your LMS/HRIS isn’t built for engagement. Let’s explore personalized learning paths aligned to your org’s talent goals.</p>';
-          } else if (objectionValue === 'customContent') {
-            result += '<p><strong>Feature Focus:</strong> Talent Architecture Builder + Career Dev features (NRE, Role Guides)</p>';
-            result += '<p><strong>Suggested Pitch:</strong> We go way beyond just custom content. Let me show you how to customize learning to your unique talent architecture.</p>';
+            result += `
+              <p><strong>Feature Focus:</strong> Career Dev features (Role Guides, Next Role Explorer, Learning Plans)</p>
+              <p><strong>Suggested Pitch:</strong> Your LMS/HRIS isn’t built for engagement. Let’s explore personalized learning paths aligned to your org’s talent goals.</p>
+            `;
           }
         }
       }
 
-      result += '</div>';
-      result += '<div class="nav-buttons">';
-      result += '<button class="back-btn" onclick="goBackToStep2()">Back</button>';
-      result += '<button class="reset-btn" onclick="startOver()">Start Over</button>';
-      result += '</div>';
+      result += `
+        </div>
+        <div class="nav-buttons">
+          <button class="back-btn" onclick="goBackToStep2()">Back</button>
+          <button class="reset-btn" onclick="startOver()">Start Over</button>
+        </div>
+      `;
 
       output.innerHTML = result;
+    }
+
+    function goBackToStep2() {
+      document.getElementById('output').classList.add('hidden');
+      if (customerPriority === 'Maybe' || customerPriority === 'No') {
+        document.getElementById('objectionStep').classList.remove('hidden');
+      } else {
+        document.getElementById('step2').classList.remove('hidden');
+      }
+    }
+
+    function startOver() {
+      customerPriority = '';
+      customerSegment = '';
+      document.getElementById('output').classList.add('hidden');
+      document.getElementById('objectionStep').classList.add('hidden');
+      document.getElementById('step2').classList.add('hidden');
+      document.getElementById('step1').classList.remove('hidden');
     }
   </script>
 </body>
