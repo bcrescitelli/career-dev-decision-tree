@@ -144,12 +144,12 @@
       <div class="card">
         <h3>Current Base Customer</h3>
         <p>Existing customer with basic LinkedIn services.</p>
-        <button class="select-button" onclick="selectSegment('Base')">Select</button>
+        <button class="select-button" onclick="selectSegment('Current Base Customer')">Select</button>
       </div>
       <div class="card">
         <h3>Current Hub Customer</h3>
         <p>Existing customer already using Hub products.</p>
-        <button class="select-button" onclick="selectSegment('Hub')">Select</button>
+        <button class="select-button" onclick="selectSegment('Current Hub Customer')">Select</button>
       </div>
       <div class="card">
         <h3>Prospect</h3>
@@ -179,120 +179,228 @@
 
   <div class="section hidden" id="output"></div>
 <script>
-  let customerPriority = '';
-  let customerSegment = '';
+let customerPriority = '';
+let customerSegment = '';
 
-  const objections = {
-    Base: [
-      { label: 'No Talent Architecture', value: 'noArch', text: '"My company doesn’t have a Talent Architecture built out"' },
-      { label: 'Already Have a Solution', value: 'existingSol', text: '"I already have a solution for this. I don’t need LIL"' },
-      { label: 'I just want LIL content', value: 'justLIL', text: '"I just want LIL content to flow through my LMS"' },
-      { label: 'No budget', value: 'noBudget', text: '"I don’t have budget – I just want an L&D solution"' }
-    ],
-    Hub: [
-      { label: 'Already Have a Solution', value: 'existingSol', text: '"I already have a solution for this. I don’t need LIL"' },
-      { label: 'Only Want Custom Content', value: 'customContent', text: '"I just want custom content – why pay for Career Hub if I can do that through LinkedIn Learning (formerly Base)?"' },
-      { label: 'No Talent Architecture', value: 'noArch', text: '"My company doesn’t have a Talent Architecture built out"' },
-      { label: 'I just want LIL content', value: 'justLIL', text: '"I just want LIL content to flow through my LMS"' }
-    ],
-    Prospect: [
-      { label: 'Already Have a Solution', value: 'existingSol', text: '"I already have a solution for this. I don’t need LIL"' },
-      { label: 'No Talent Architecture', value: 'noArch', text: '"My company doesn’t have a Talent Architecture built out"' },
-      { label: 'I just want LIL content', value: 'justLIL', text: '"I just want LIL content to flow through my LMS"' }
-    ]
+const decisionTreeData = [
+  {
+    priority: "Yes",
+    customerType: "Current Base Customer",
+    objection: "N/A",
+    product: "LinkedIn Learning Career Hub",
+    feature: "LinkedIn data, Talent architecture builder, Career Pathing, Role Play enterprise customization, AI Skill Pathways",
+    pitch: "Now's the perfect time to consider LinkedIn Learning Career Hub – Career Hub can help you grow and retain talent for a dynamic world. It’s the only platform powered by your internal job and skill architecture, real-time insights from over a billion career paths, and everything you know and love about LinkedIn Learning.",
+    tip: "Ask to multithread to Talent Management DM to communicate Career Hub value across HR team."
+  },
+  {
+    priority: "Maybe",
+    customerType: "Current Base Customer",
+    objection: "No Talent Architecture",
+    product: "LinkedIn Learning Career Hub",
+    feature: "Talent Architecture Builder",
+    pitch: "No problem! You now can build a talent architecture from scratch by simply uploading a list of role titles. Career Hub can deliver role description and skill suggestions in moments, based on AI and LinkedIn Economic Graph data.",
+    tip: "Show CSV upload, mention Workday HRIS roadmap. Offer LinkedIn Learning (Base) if still not interested."
+  },
+  {
+    priority: "Maybe",
+    customerType: "Current Base Customer",
+    objection: "Already have a solution",
+    product: "LinkedIn Learning Career Hub",
+    feature: "Career Dev features (Role Guides, Next Role Explorer, Learning Plans)",
+    pitch: "LinkedIn Learning delivers a more effective learner and admin experience over your existing solution. Let me show you how.",
+    tip: "Customize Role Play with LinkedIn Learning Career Hub. Position against competitors like Workday, Eightfold."
+  },
+  {
+    priority: "No",
+    customerType: "Current Base Customer",
+    objection: "Just want LIL content to flow through LMS",
+    product: "LinkedIn Learning (Base)",
+    feature: "AI Role Play, AI search, and new AI functionality",
+    pitch: "LinkedIn Learning offers personalized learning experiences to accelerate skill development like AI-powered coaching and role-play practice.",
+    tip: "Use AI toolkit to show customization and time-spent benefits."
+  },
+  {
+    priority: "No",
+    customerType: "Current Base Customer",
+    objection: "No budget",
+    product: "LinkedIn Learning (Base)",
+    feature: "AI Role Play, AI search, and new AI functionality",
+    pitch: "You’re already positioned to benefit from LinkedIn Learning. Learners who engage with AI-powered coaching spend 25% more time learning.",
+    tip: "Use Learning Center tools to boost adoption and engagement."
+  },
+  {
+    priority: "Yes",
+    customerType: "Current Hub Customer",
+    objection: "N/A",
+    product: "LinkedIn Learning Career Hub",
+    feature: "LinkedIn data, Talent architecture builder, Career Pathing, Role Play enterprise customization, AI Skill Pathways",
+    pitch: "Now, with the new LinkedIn Learning Career Hub we can help you grow and retain talent for a dynamic world. It’s the only platform powered by your internal job and skill architecture, real-time insights from over a billion career paths, and everything you know and love about LinkedIn Learning.",
+    tip: "Ask to multithread to Talent Management DM to communicate Career Hub value across HR team."
+  },
+  {
+    priority: "Maybe",
+    customerType: "Current Hub Customer",
+    objection: "Already have a solution",
+    product: "LinkedIn Learning Career Hub",
+    feature: "Career Dev features (Role Guides, Next Role Explorer, Learning Plans)",
+    pitch: "LinkedIn Learning delivers a more effective learner and admin experience over your existing solution. Let me show you how.",
+    tip: "Customize Role Play with LinkedIn Learning Career Hub. Position against competitors like Workday, Eightfold."
+  },
+  {
+    priority: "Maybe",
+    customerType: "Current Hub Customer",
+    objection: "Only want custom content",
+    product: "LinkedIn Learning Career Hub",
+    feature: "Talent Architecture Builder + Career Dev features (NRE, Role Guides)",
+    pitch: "LinkedIn Learning Career Hub goes way beyond just custom content. We help you customize learning to your unique talent architecture.",
+    tip: "Show CSV upload, mention Workday HRIS roadmap. Multithread to Talent Management DM."
+  },
+  {
+    priority: "No",
+    customerType: "Current Hub Customer",
+    objection: "No Talent Architecture",
+    product: "LinkedIn Learning Career Hub",
+    feature: "Talent Architecture Builder",
+    pitch: "You can build a talent architecture from scratch with Career Hub. Let me show you how…",
+    tip: "Show CSV upload, mention Workday HRIS roadmap. If not interested, pitch Base as premium skill dev solution."
+  },
+  {
+    priority: "No",
+    customerType: "Current Hub Customer",
+    objection: "Just want LIL content to flow through LMS",
+    product: "LinkedIn Learning Career Hub",
+    feature: "AI Role Play, AI search, and other AI features",
+    pitch: "LinkedIn Learning offers a more effective learner and admin experience beyond your LMS. Let me show you how…",
+    tip: "Show AI features in Career Hub. If not interested, pitch Base as premium skill dev solution."
+  },
+  {
+    priority: "Yes",
+    customerType: "Prospect",
+    objection: "N/A",
+    product: "LinkedIn Learning Career Hub",
+    feature: "LinkedIn data, Talent architecture builder, Career Pathing, Role Play enterprise customization, AI Skill Pathways",
+    pitch: "The new LinkedIn Learning Career Hub can help you grow and retain talent for a dynamic world. It’s the only platform powered by your internal job and skill architecture, real-time insights from over a billion career paths, and everything you know and love about LinkedIn Learning.",
+    tip: "Ask to multithread to Talent Management DM to communicate Career Hub value across HR team."
+  },
+  {
+    priority: "Maybe",
+    customerType: "Prospect",
+    objection: "Already have a solution",
+    product: "LinkedIn Learning Career Hub",
+    feature: "Career Dev features (Role Guides, Next Role Explorer, Learning Plans)",
+    pitch: "LinkedIn Learning delivers a more effective learner and admin experience over your existing solution. Let me show you how…",
+    tip: "Showcase career pathing tools. Position against competitors like Workday, Eightfold."
+  },
+  {
+    priority: "No",
+    customerType: "Prospect",
+    objection: "No Talent Architecture",
+    product: "LinkedIn Learning Career Hub",
+    feature: "Talent Architecture Builder",
+    pitch: "You can build a talent architecture from scratch with Career Hub. Let me show you how…",
+    tip: "Show CSV upload, mention Workday HRIS roadmap. If not interested, pitch Base as premium skill dev solution."
+  },
+  {
+    priority: "No",
+    customerType: "Prospect",
+    objection: "Just want LIL content to flow through LMS",
+    product: "LinkedIn Learning Career Hub",
+    feature: "AI Role Play, AI search, and other AI features",
+    pitch: "LinkedIn Learning offers a more effective learner and admin experience beyond your LMS. Let me show you how…",
+    tip: "Show AI features in Career Hub. If not interested, pitch Base as premium skill dev solution."
+  }
+];
+
+function showResults(objectionValue = '') {
+  document.getElementById('step2').classList.add('hidden');
+  document.getElementById('objectionStep').classList.add('hidden');
+  const output = document.getElementById('output');
+  output.classList.remove('hidden');
+
+  const match = (priority, type, objection) => {
+    return decisionTreeData.find(item =>
+      item.priority === priority &&
+      item.customerType === type &&
+      item.objection === (objection || "N/A")
+    );
   };
 
-  function selectPriority(val) {
-    customerPriority = val;
-    document.getElementById('step1').classList.add('hidden');
-    document.getElementById('step2').classList.remove('hidden');
-  }
+  const recommendation = match(customerPriority, customerSegment, objectionValue);
 
-  function selectSegment(segment) {
-    customerSegment = segment;
-    document.getElementById('step2').classList.add('hidden');
-
-    if (customerPriority === 'Maybe' || customerPriority === 'No') {
-      const container = document.getElementById('objectionCards');
-      container.innerHTML = '';
-      objections[segment].forEach(obj => {
-        container.innerHTML += `
-          <div class="card">
-            <h3>${obj.label}</h3>
-            <p>${obj.text}</p>
-            <button class="select-button" onclick="selectObjection('${obj.value}')">Select</button>
-          </div>`;
-      });
-      document.getElementById('objectionStep').classList.remove('hidden');
-    } else {
-      showResults();
+  let result = '<div class="step-indicator"><div class="circle">1</div><div class="circle">2</div><div class="circle active">3</div></div>';
+  result += '<h2>Recommended Product Solution</h2><div class="card">';
+  if (recommendation) {
+    result += `<h3>${recommendation.product}</h3>`;
+    result += `<p><strong>Feature Focus:</strong> ${recommendation.feature}</p>`;
+    result += `<p><strong>Pitch:</strong> ${recommendation.pitch}</p>`;
+    if (recommendation.tip) {
+      result += `<p><strong>Demo Tip:</strong> ${recommendation.tip}</p>`;
     }
+  } else {
+    result += `<p>No matching recommendation found. Please review the logic.</p>`;
   }
+  result += '</div><div class="nav-buttons">';
+  result += '<button class="back-btn" onclick="goBackToStep2()">Back</button>';
+  result += '<button class="reset-btn" onclick="startOver()">Start Over</button></div>';
 
-  function selectObjection(objectionValue) {
-    showResults(objectionValue);
+  output.innerHTML = result;
+}
+
+function selectPriority(val) {
+  customerPriority = val;
+  document.getElementById('step1').classList.add('hidden');
+  document.getElementById('step2').classList.remove('hidden');
+}
+
+function selectSegment(segment) {
+  customerSegment = segment;
+  document.getElementById('step2').classList.add('hidden');
+
+  if (customerPriority === 'Maybe' || customerPriority === 'No') {
+    const container = document.getElementById('objectionCards');
+    container.innerHTML = '';
+
+    const allObjections = [...new Set(decisionTreeData
+      .filter(d => d.priority === customerPriority && d.customerType === segment && d.objection !== "N/A")
+      .map(d => d.objection))];
+
+    allObjections.forEach(obs => {
+      container.innerHTML += `
+        <div class="card">
+          <h3>${obs}</h3>
+          <button class="select-button" onclick="selectObjection('${obs}')">Select</button>
+        </div>`;
+    });
+
+    document.getElementById('objectionStep').classList.remove('hidden');
+  } else {
+    showResults();
   }
+}
 
-  function showResults(objectionValue = '') {
-    document.getElementById('step2').classList.add('hidden');
-    document.getElementById('objectionStep').classList.add('hidden');
-    const output = document.getElementById('output');
-    output.classList.remove('hidden');
+function selectObjection(objectionValue) {
+  showResults(objectionValue);
+}
 
-    let result = '<div class="step-indicator"><div class="circle">1</div><div class="circle">2</div><div class="circle active">3</div></div>';
-    result += '<h2>Recommended Product Solution</h2><div class="card">';
-    result += '<h3>LinkedIn Learning Career Hub</h3>';
+function goBackToStep1() {
+  document.getElementById('step2').classList.add('hidden');
+  document.getElementById('step1').classList.remove('hidden');
+}
 
-    if (customerPriority === 'Yes') {
-      result += `<p><strong>Feature Focus:</strong> LinkedIn data, Talent architecture builder, Career Pathing, Role Play customization, AI Skill Pathways</p>`;
-      result += `<p><strong>Pitch:</strong> Now's the perfect time to consider Career Hub – it helps grow and retain talent using real-time insights from over a billion career paths and your internal job architecture.</p>`;
-      result += `<p><strong>Multithread:</strong> Ask to multithread to Talent Management DM to communicate Career Hub value across HR team.</p>`;
-    } else {
-      if (objectionValue === 'noArch') {
-        result += `<p><strong>Feature Focus:</strong> Talent Architecture Builder</p>`;
-        result += `<p><strong>Suggested Pitch:</strong> No problem! You can build a talent architecture from scratch by uploading a list of role titles. Career Hub uses LinkedIn Economic Graph data to suggest skills and descriptions. Let me show you how.</p>`;
-      } else if (objectionValue === 'existingSol') {
-        result += `<p><strong>Feature Focus:</strong> Career Dev features (Role Guides, Next Role Explorer, Learning Plans)</p>`;
-        result += `<p><strong>Suggested Pitch:</strong> Your LMS/HRIS isn’t built for engagement. Career Hub delivers unique, personalized learning experiences powered by your org’s job architecture. Let me show you how.</p>`;
-      } else if (objectionValue === 'customContent') {
-        result += `<p><strong>Feature Focus:</strong> Talent Architecture Builder + Career Dev features</p>`;
-        result += `<p><strong>Suggested Pitch:</strong> We go way beyond custom content. Career Hub helps you customize learning aligned to your unique talent architecture. Let me show you how.</p>`;
-      } else if (objectionValue === 'justLIL') {
-        result += `<p><strong>Feature Focus:</strong> AI Role Play, AI search, and new AI-powered learning features</p>`;
-        result += `<p><strong>Suggested Pitch:</strong> LinkedIn Learning offers more than LMS content delivery. With features like AI-powered coaching and role-play practice, learners spend 25% more time learning. Let me show you how it enhances your existing tools.</p>`;
-      } else if (objectionValue === 'noBudget') {
-        result += `<p><strong>Feature Focus:</strong> LinkedIn Learning (formerly Base) + new AI functionality</p>`;
-        result += `<p><strong>Suggested Pitch:</strong> No problem! You’re already positioned to benefit from your current access to LinkedIn Learning. We’re helping learners access personalized learning experiences, including AI coaching and skill pathways.</p>`;
-      }
-    }
+function goBackToStep2() {
+  document.getElementById('output').classList.add('hidden');
+  document.getElementById('objectionStep').classList.add('hidden');
+  document.getElementById('step2').classList.remove('hidden');
+}
 
-    result += '</div><div class="nav-buttons">';
-    result += '<button class="back-btn" onclick="goBackToStep2()">Back</button>';
-    result += '<button class="reset-btn" onclick="startOver()">Start Over</button></div>';
-
-    output.innerHTML = result;
-  }
-
-  function goBackToStep1() {
-    document.getElementById('step2').classList.add('hidden');
-    document.getElementById('step1').classList.remove('hidden');
-  }
-
-  function goBackToStep2() {
-    document.getElementById('output').classList.add('hidden');
-    document.getElementById('objectionStep').classList.add('hidden');
-    document.getElementById('step2').classList.remove('hidden');
-  }
-
-  function startOver() {
-    customerPriority = '';
-    customerSegment = '';
-    document.getElementById('step1').classList.remove('hidden');
-    document.getElementById('step2').classList.add('hidden');
-    document.getElementById('objectionStep').classList.add('hidden');
-    document.getElementById('output').classList.add('hidden');
-  }
+function startOver() {
+  customerPriority = '';
+  customerSegment = '';
+  document.getElementById('step1').classList.remove('hidden');
+  document.getElementById('step2').classList.add('hidden');
+  document.getElementById('objectionStep').classList.add('hidden');
+  document.getElementById('output').classList.add('hidden');
+}
 </script>
 </body>
 </html>
-
